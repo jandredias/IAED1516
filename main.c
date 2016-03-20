@@ -34,6 +34,7 @@ void init();
 int strlen2(char c[]);
 int adiciona_aeroportos();
 int altera_capacidade_maxima();
+int imprime_valores();
 
 /****************************************************************************
 *
@@ -62,7 +63,7 @@ int main() {
 					printf("There was an error: invalid Id.\n");
 				}
 				if (result == 2) {
-					printf("There was an error: Invalid capacity\n");
+					printf("There was an error: Invalid capacity.\n");
 					exit(1);
 				}
 			}
@@ -70,7 +71,7 @@ int main() {
 	        case 'I':
 			altera_capacidade_maxima();
 			break;
-		case 'F':
+	/*	case 'F':
 			adiciona_airoportos();
 			break;
 		case 'G':
@@ -105,10 +106,11 @@ int main() {
 			break;
 		case 'X':
 			adiciona_airoportos();
-			break;
+			break;*/
 		default:
-			puts("Command not found");*/
+			printf("Command not found:%c\n", command);
 		}
+		getchar(); /* le o  \n */
 	}
 	while (command != 'X');
 	return 0;
@@ -117,6 +119,7 @@ int main() {
 /*****************************************************************************
 *
 *  AUXILIARY FUNCTIONS
+*
 *****************************************************************************/
 void init(){
 	
@@ -140,6 +143,19 @@ int strlen2(char c[]){
 	}
 		  return index; /*meti isto pq n sei ate que ponto podes usar a biblioteca da linha1 */
 }
+void imprime_vetores(){
+	int i;
+	printf("LISTA DE AEROPORTOS\n");	
+	printf("===================\n");	
+	for(i = 0; i < contador_aeroportos; i++){
+		printf("Aeroporto %d:\n", i);
+		printf("ID:       %s\n", airport[i].id);
+		printf("CAPACITY: %d\n", airport[i].capacity);
+		printf("STATE:    %d\n", airport[i].state);
+		printf("\n");
+	}
+	printf("\n===================\n");
+}
 
 /***************************************************************************
 *
@@ -157,25 +173,87 @@ int strlen2(char c[]){
  *
  */
 int adiciona_aeroportos() {
+	int k = 0;
 	scanf("%s", airport[contador_aeroportos].id);
 	scanf("%u", &airport[contador_aeroportos].capacity);
-	if(strlen2(airport[contador_aeroportos].id) != 3)
-		return 1; 
-  	else if(airport[contador_aeroportos].capacity <= 0 ||
-		airport[contador_aeroportos].capacity > UINT_MAX)
+	for(k = 0; k < 3; k++){
+		if(strlen2(airport[contador_aeroportos].id) != 3 || airport[contador_aeroportos].id[k] > 'Z' || airport[contador_aeroportos].id[k] < 'A'){
+			return 1;
+		}
+	} 
+  	if(airport[contador_aeroportos].capacity <= 0 ||
+		airport[contador_aeroportos].capacity > UINT_MAX){
 		return 2;
-
+	}
 	contador_aeroportos++;
+	#if DEBUG
+	imprime_vetores();
+	#endif
 		return 0;
 }
-int altera_capacidade_maxima() {
-	char i[3];
-	int d = 0, k = 0, nova
-	for(k; k < 3; k++){
+/*
+ * Esta função altera a capacidade maxima de um aeroporto
+ *
+ * On success: altera a capacidade do aeroporto
+ * On failure return: 
+ *   		1 or 2 invalid id
+ * 		3 id not found
+ * 		4 invalid capacity
+ * 		5 airport closed
+ *
+ */
+int altera_capacidade_maxima() { /*falta o caso do aerogaitas estar fechado*/
+	char i[4], d = '\0';
+	int k = 0, capacidade_inserida = 0, nova_capacidade = 0, j = 0;
+	#if DEBUG
+	printf("caracter espaco: %c\n",getchar()); /* le o espaco */
+	#endif
+	for(; k < 3; k++){
 		i[k] = getchar();
-	if((d = getchar()) != '\0' || d != '\t' || d != '\n')
-		/*criar o erro*/
-	
+		if(i[k] > 'Z' || i[k] < 'A'){
+			#if DEBUG
+			printf("caracter lido: %c", i[k]);
+			#endif
+			return 1;
+			printf("*Capacidade de %s inalterada\n", airport[j].id);
+			#if DEBUG
+			imprime_vetores();
+			#endif
+		}
+	} 
+	i[3] = '\0';
+	if((d = getchar()) != ' '){
+		#if DEBUG
+		printf("%c", d);
+		#endif
+		return 2;
+		printf("*Capacidade de %s inalterada\n", airport[j].id);
+	}
+	scanf("%d", &capacidade_inserida);
+	for(j = 0; j < contador_aeroportos; j++){
+		if(strcmp(i, airport[j].id) == 0){
+			if(airport[j].state == 1){
+				nova_capacidade = airport[j].capacity + capacidade_inserida;
+				if(nova_capacidade > 0){
+					airport[j].capacity = nova_capacidade;
+					#if DEBUG
+					imprime_vetores();
+					#endif
+					return 0;
+				}else{
+					return 4;
+                                	printf("*Capacidade de %s inalterada\n", airport[j].id);
+
+				}}else
+				  printf("*Capacidade de %s inalterada\n", airport[j].id);
+				  return 5;
+		}
+	}
+	return 3;
+        printf("*Capacidade de %s inalterada\n", airport[j].id);
+
+}		
+
 	
 
- 
+
