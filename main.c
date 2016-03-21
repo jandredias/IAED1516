@@ -233,10 +233,10 @@ int ocupacao_aeroporto(char o[]){
  */
 int adiciona_aeroportos() {
 	int k = 0, validade = 0;
-	char i[4] = "\0";
+	char i[4] = "\0"i;
 	validade = le_id(i)
 	if(validade == 0){
-		strcopy(airport[contador_aeroportos].id, i);
+		strcpy(airport[contador_aeroportos].id, i);
 		scanf("%u", &airport[contador_aeroportos].capacity);
 		for(k = 0; k < 3; k++){
 			if(strlen2(airport[contador_aeroportos].id) != 3 || airport[contador_aeroportos].id[k] > 'Z' || airport[contador_aeroportos].id[k] < 'A'){
@@ -300,8 +300,12 @@ void altera_capacidade_maxima() {
 
 /* vetor i --> primeiro id
  * vetor j --> segundo id
- * Esta função 
- *
+ * Esta função adiciona o voo de ida e volta entre dois aeroportos 
+ * 	vetor i --> primeiro id
+ *      vetor j --> segundo id
+ * 		in success:
+ * 			
+
  */	}		
 int adiciona_voo_ida_volta() {
 	int validade_1_id = 0, validade_2_id = 0, existe_1_id = 0, existe_2_id = 0, ocupacao_1_id = 0, ocupacao_2_id, k = 0;
@@ -316,13 +320,13 @@ int adiciona_voo_ida_volta() {
 			ocupacao_2_id = ocupacao_aeroporto(j);
 				if(ocupacao_1_id != -1 && ocupacao_2_id != -1){
 					for(k = 0; k < MAX_AIRPORT; k++){ 
-			                        if(airport[k].id = i){
+			                        if(airport[k].id == i){
 							if(ocupacao_1_id + 2 <= airport[k].capacity){
 								for(v = 0; v < MAX_AIRPORT; v++);{
-									if(airport[v].id = j){
+									if(airport[v].id == j){
 										if(ocupacao_2_id + 2 <= airport[v].capacity){
-											matriz[k][v] += 2;
-											matriz[v][k] += 2;}
+											matriz[k][v] += 1;
+											matriz[v][k] += 1;}
 										else{
 											printf("*Impossivel adicionar voo RT %s %s", i, j);
 										}
