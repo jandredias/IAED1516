@@ -34,10 +34,10 @@ void init();
 int strlen2(char[]);
 int adiciona_aeroportos();
 void altera_capacidade_maxima();
-int adiciona_voo_ida_volta(); 
-int adiciona_rota();
-int remove_voo();
-int remove_voo_ida_volta();
+void adiciona_voo_ida_volta(); 
+void adiciona_rota();
+void remove_voo();
+void remove_voo_ida_volta();
 int numero_voos();
 int aeroporto_mais_voos();
 int aeroporto_mais_conectado();
@@ -50,7 +50,7 @@ int le_id(char[]);
 int leid2(char[]);
 int adiciona_rota(); 
 int imprime_valores();
-int adiciona_voo_aux(int); 
+void adiciona_voo_aux(int); 
 
 /****************************************************************************
  *
@@ -312,28 +312,25 @@ void altera_capacidade_maxima() {
 				}
 }
 
-/* vetor i --> primeiro id
- * vetor j --> segundo id
- * Estas funções adicionam o voo de ida e volta (no caso da primeira), adicionam de ida (no caso da segunda), removem o voo de ida (no caso da terceira), removem de ida e volta (no caso da quarta)  
+/* Estas funções adicionam o voo de ida e volta (no caso da primeira), adicionam de ida (no caso da segunda), removem o voo de ida (no caso da terceira), removem de ida e volta (no caso da quarta)  
  * 			vetor i --> primeiro id
  *      vetor j --> segundo id
  * 		on success: modified matriz[][]
  * 		on failure: "*Impossivel adicionar voo RT <ID1> <ID2>"	
-
  */		
-int adiciona_voo_ida_volta(){
+void adiciona_voo_ida_volta(){
 				adiciona_voo_aux(3);
 }
-int adiciona_rota(){
+void adiciona_rota(){
 				adiciona_voo_aux(2);
 }
-int remove_voo(){
+void remove_voo(){
 				adiciona_voo_aux(1);
 }
-int remove_voo_ida_volta(){
+void remove_voo_ida_volta(){
 				adiciona_voo_aux(0)
 }
-int adiciona_voo_aux(int test) {
+adiciona_voo_aux(int test) {
 	int validade_1_id = 0, validade_2_id = 0, existe_1_id = 0, existe_2_id = 0, ocupacao_1_id = 0, ocupacao_2_id, k = 0;
 	char i[4] = "\0", j[4] = "\0";
 	validade_1_id = le_id(i);
@@ -375,50 +372,52 @@ int adiciona_voo_aux(int test) {
 		printf("*Impossivel adicionar voo RT %s %s", i, j);
 	}
 }
-/*cenas
- *
- *
- *
+/*
+ * Esta função indica o numero de voos entre dois aoreportos
+ * On success:
+ *   					printf("Voos entre cidades id_1:id_2:Noutgoing:Nincoming")
+ * On failure:
+ * 						printf("*Aeroporto <id> inexistente")
  */
-int numero_voos(){
+void numero_voos(){
 		int validade_1_id = 0, validade_2_id = 0, existe_1_id = 0, existe_2_id = 0, ocupacao_1_id = 0, ocupacao_2_id, k = 0;
 	char i[4] = "\0", j[4] = "\0";
 	validade_1_id = le_id(i);
 	validade_2_id = le_id2(j);
-	if(validade_1_id == 0 && validade_2_id == 0){
-		existe_1_id = verifica_id(i);
-		existe_2_id = verifica_id(j);
-		if(existe_1_id == 0 && existe_2_id == 0){
-			for(k = 0; k < MAX_AIRPORT; k++){ 
-					if(strcmp(airport[k].id, i) == 0 && 
-							airport[k].state == 1){
-						for(v = 0; v < MAX_AIRPORT; v++);{
-							if(strcmp(airport[v].id, j) == 0 && 
-									airport[v].state == 1 &&
-									ocupacao_2_id + 2 <= airport[v].capacity){
-											if(test == 3 || test == 2){ matriz[k][v] += 1;}
-											if(test == 3){ matriz[v][k] += 1;}
-											if(test == 0 || test == 1){ matriz[k][v] -= 1;}
-											if(test == 0){ matriz[v][k] -= 1;}
-							}else{
-								printf("*Impossivel adicionar voo RT %s %s", i, j);
-							}
-						} /* END OF FOR */
-					}else{
-						printf("*Impossivel adicionar voo RT %s %s", i, j);
-					}
-				} /* END OF FOR */
+	if(validade_1_id == 0){
+		if(validade_2_id == 0){
+			existe_1_id = verifica_id(i);
+			existe_2_id = verifica_id(j);
+			if(existe_1_id == 0){
+				if(existe_2_id == 0){
+					for(k = 0; k < MAX_AIRPORT; k++){ 
+						if(strcmp(airport[k].id, i) == 0 && 
+								airport[k].state == 1){
+							for(v = 0; v < MAX_AIRPORT; v++);{
+								if(strcmp(airport[v].id, j) == 0 && 
+									airport[v].state == 1){
+									printf("Voos entre cidades %s:%s:%d:%d", i,j, matriz[k][v], matriz[v][k]);		
+								}else{
+									printf("*Aeroporto %s inexistente", j);		
+								}
+							} /* END OF FOR */
+						}else{
+							printf("*Aeroporto %s inexistente", i);
+						}
+					} /* END OF FOR */
+				}else{
+				printf("*Aeroporto %s inexistente", j);
+				} 
 			}else{
-				printf("*Impossivel adicionar voo RT %s %s", i, j);
-			} 
+				printf("*Aeroporto %s inexistente", i);
+			}
 		}else{
-			printf("*Impossivel adicionar voo RT %s %s", i, j);
+			printf("*Aeroporto %s inexistente", j);
 		}
 	}else{
-		printf("*Impossivel adicionar voo RT %s %s", i, j);
+		printf("*Aeroporto %s inexistente", i);
 	}
 }
-
 
 
 
