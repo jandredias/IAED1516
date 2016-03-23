@@ -445,6 +445,11 @@ void aeroporto_mais_voos(){
 	}		
 	printf("Aeroporto com mais rotas %s:%d:%d", airport[i_valor_maximo].id, ida_permanente, vinda_permanente); 
 }
+/*piroca
+ *
+ * 
+ * 
+ */
 void aeroporto_mais_conectado(){
 	int k = 0, j = 0, i_valor_maximo = 0, l = 0, vetor_de_totais[MAX_AIRPORT], soma_temporaria = 0, soma_permanente = 0, ida_temporaria = 0, ida_permanente = 0, vinda_temporaria = 0, vinda_permanente = 0;
 	for(linhas = 0, indice_temporario = 0; linhas < MAX_AIRPORT; linhas++, indice_temporario++){
@@ -452,17 +457,47 @@ void aeroporto_mais_conectado(){
 			if((matriz[linhas][colunas] > 0 && matriz[colunas][linhas] > 0) || (matriz[linhas][colunas] > 0 && matriz[linhas][colunas] < 0) || (matriz[linhas][colunas] < 0 && matriz[linhas][colunas] > 0)){
 				soma_temporaria	+= 1; 
 		  }
+		}
 			if(soma_temporaria > soma_permanente){
 				soma_permanente = soma_temporaria;
 				indice_permanente = indice_temporario;
-			
-		vetor_de_totais[k] = soma;
-	}
-	for(j = 0; j < MAX_AIRPORT; j++){
-		 if(vetor_de_totais[j] > vetor_de_totais[i_valor_maximo]){
-			i_valor_maximo = j;
-		 }
+			}
 	}		
-	printf("Aeroporto com mais rotas %s:%d:%d", airport[i_valor_maximo].id, ida_permanente, vinda_permanente); 
+	
+	printf("Aeroporto com mais ligacoes %s:%d", airport[indice_temporario], indice_permanente); 
 }
-
+/* piroca
+ *
+ *
+ *
+ */
+void voo_mais_popular(){
+}
+/*
+ *
+ *
+ *
+ */
+void encerra_aeroporto(){
+}
+/*
+ *
+ *
+ *
+ */
+void reabre_aeroporto(){
+}
+/*
+ *
+ *
+ *
+ */
+void emitir_listagem(){
+}
+/*
+ *
+ *
+ *
+ */
+void sair_do_programa(){
+}
