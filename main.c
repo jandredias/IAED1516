@@ -282,37 +282,33 @@ void altera_capacidade_maxima() {
 				int validade = 0;
 				char i[4] = "\0";
 				validade = le_id(i);
-				if(validade == 1){
-								printf("*Capacidade de %s inalterada\n", airport[j].id);
-				}
-				if(validade == 2){
-								printf("*Capacidade de %s inalterada\n", airport[j].id);
-				}
-				scanf("%d", &capacidade_inserida);
-				for(j = 0; j < contador_aeroportos; j++){
-								if(strcmp(i, airport[j].id) == 0){
-												if(airport[j].state == 1){
-																nova_capacidade = airport[j].capacity + capacidade_inserida;
-																if(nova_capacidade > 0){
-																				airport[j].capacity = nova_capacidade;
+				if(validade == 0){
+					scanf("%d", &capacidade_inserida);
+					for(j = 0; j < contador_aeroportos; j++){
+									if(strcmp(i, airport[j].id) == 0){
+													if(airport[j].state == 1){
+																	nova_capacidade = airport[j].capacity + capacidade_inserida;
+																	if(nova_capacidade > 0){
+																					airport[j].capacity = nova_capacidade;
 #if DEBUG
 																				imprime_vetores();
 #endif
 																				break;
-																}	
-																else{
+																	}	
+																	else{
 																				printf("*Capacidade de %s inalterada\n", airport[j].id);
-																}}
-												else{
+																	}}
+													else{
 																printf("*Capacidade de %s inalterada\n", airport[j].id);
-												}
-								}
-								else {
+													}	
+									}
+									else {
 												printf("*Capacidade de %s inalterada\n", airport[j].id);
-								}
+									}
 				}
-}
-
+				}
+				else{
+						printf("*Capacidade de %s inalterada\n", airport[j].id);
 /* Estas funções adicionam o voo de ida e volta (no caso da primeira), adicionam de ida (no caso da segunda), removem o voo de ida (no caso da terceira), removem de ida e volta (no caso da quarta)  
  * 			vetor i --> primeiro id
  *      vetor j --> segundo id
