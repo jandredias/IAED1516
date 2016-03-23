@@ -279,7 +279,7 @@ int adiciona_aeroportos() {
  *
  */
 void altera_capacidade_maxima() { 
-				int validade = 0;
+				int validade = 0, j = 0;
 				char i[4] = "\0";
 				validade = le_id(i);
 				if(validade == 0){
