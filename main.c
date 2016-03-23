@@ -38,8 +38,8 @@ void adiciona_voo_ida_volta();
 void adiciona_rota();
 void remove_voo();
 void remove_voo_ida_volta();
-int numero_voos();
-int aeroporto_mais_voos();
+void numero_voos();
+void aeroporto_mais_voos();
 int aeroporto_mais_conectado();
 int voo_mais_popular();
 int encerra_aeroporto();
@@ -247,7 +247,7 @@ int ocupacao_aeroporto(char o[]){
  */
 int adiciona_aeroportos() {
 				int k = 0, validade = 0;
-				char i[4] = "\0"i;
+				char i[4] = "\0";
 				validade = le_id(i)
 								if(validade == 0){
 												strcpy(airport[contador_aeroportos].id, i);
@@ -298,6 +298,7 @@ void altera_capacidade_maxima() {
 #if DEBUG
 																				imprime_vetores();
 #endif
+																				break;
 																}	
 																else{
 																				printf("*Capacidade de %s inalterada\n", airport[j].id);
@@ -418,18 +419,50 @@ void numero_voos(){
 		printf("*Aeroporto %s inexistente", i);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* Esta função retorna o nome do aeroporto(id) com maior numero de voos que chegam e partem 
+ *
+ *
+ *
+ */
+void aeroporto_mais_voos(){
+	int k = 0, j = 0, i_valor_maximo = 0, l = 0, vetor_de_totais[MAX_AIRPORT], soma_temporaria = 0, soma_permanente = 0, ida_temporaria = 0, ida_permanente = 0, vinda_temporaria = 0, vinda_permanente = 0;
+	for(k = 0, soma_temporaria = 0; k < MAX_AIRPORT; k++, soma_temporaria = 0){
+		for(l = 0; l < MAX_AIRPORT; l++){
+			soma_temporaria += matriz[k][l] + matriz[l][k];
+			ida_temporaria = matriz[k][l];
+			vinda_permanente = matriz[l][k];
+			if(soma_permanente < soma_temporaria){
+				soma_permanente = soma_temporaria;
+				ida_permanente = ida_temporaria;
+				vinda_permanente = vinda_temporaria;	 
+		}
+		vetor_de_totais[k] = soma;
+	}
+	for(j = 0; j < MAX_AIRPORT; j++){
+		 if(vetor_de_totais[j] > vetor_de_totais[i_valor_maximo]){
+			i_valor_maximo = j;
+		 }
+	}		
+	printf("Aeroporto com mais rotas %s:%d:%d", airport[i_valor_maximo].id, ida_permanente, vinda_permanente); 
+}
+void aeroporto_mais_conectado(){
+	int k = 0, j = 0, i_valor_maximo = 0, l = 0, vetor_de_totais[MAX_AIRPORT], soma_temporaria = 0, soma_permanente = 0, ida_temporaria = 0, ida_permanente = 0, vinda_temporaria = 0, vinda_permanente = 0;
+	for(linhas = 0, indice_temporario = 0; linhas < MAX_AIRPORT; linhas++, indice_temporario++){
+		for(colunas = 0; colunas < MAX_AIRPORT; colunas++){
+			if((matriz[linhas][colunas] > 0 && matriz[colunas][linhas] > 0) || (matriz[linhas][colunas] > 0 && matriz[linhas][colunas] < 0) || (matriz[linhas][colunas] < 0 && matriz[linhas][colunas] > 0)){
+				soma_temporaria	+= 1; 
+		  }
+			if(soma_temporaria > soma_permanente){
+				soma_permanente = soma_temporaria;
+				indice_permanente = indice_temporario;
+			
+		vetor_de_totais[k] = soma;
+	}
+	for(j = 0; j < MAX_AIRPORT; j++){
+		 if(vetor_de_totais[j] > vetor_de_totais[i_valor_maximo]){
+			i_valor_maximo = j;
+		 }
+	}		
+	printf("Aeroporto com mais rotas %s:%d:%d", airport[i_valor_maximo].id, ida_permanente, vinda_permanente); 
+}
 
