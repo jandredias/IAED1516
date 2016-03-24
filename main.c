@@ -16,7 +16,10 @@ typedef struct {
 				unsigned int capacity;
 				int state;
 } AIRPORT;
-
+typedef struct{
+				char id[4];
+				unsigned int flights;
+} ESTRUTURA_AUXILIAR; 
 /****************************************************************************
  *
  *  GLOBAL VARIABLES
@@ -25,6 +28,7 @@ typedef struct {
 AIRPORT airport[MAX_AIRPORT];
 int matriz[MAX_AIRPORT][MAX_AIRPORT];
 int contador_aeroportos = 0;
+ESTRUTURA_AUXILIAR vetor_id_voos[MAX_AIRPORT];
 /****************************************************************************
  *
  *  HEADER
@@ -192,7 +196,6 @@ int le_id(char i[]){
 }
 int le_id2(char j[]){
 				int k = 0;
-				char j[4] = "\0";
 				for(; k < 3; k++){
 								j[k] = getchar();
 								if(j[k] > 'Z' || j[k] < 'A'){
@@ -204,17 +207,16 @@ int le_id2(char j[]){
 				}
 				return 0;
 }
-int verifica_id(char p[]){
-				int k = 0;
-				if(validade == 0){
-								for(k = 0; k < MAX_AIRPORT; k++){
-												if(airport[k].id = p){
-																return 0;
-												}
-												else {
-																return 3;}
-								}
-				}}
+int verifica_id(char p[]){ 
+				int k = 0;				
+				for(k = 0; k < contador_aeroportos; k++){
+					if(airport[k].id = p){
+						return 0;
+					}
+					else {
+						return 3;}
+					}
+}
 int ocupacao_aeroporto(char o[]){
 				for(k = 0; k < MAX_AIRPORT; k++){
 								if(airport[k].id = p){
@@ -228,8 +230,38 @@ int ocupacao_aeroporto(char o[]){
 								else{
 												return -1
 								}
-				}}
-
+				}
+}
+int voos_partida(char id[]){
+	int k = 0, colunas = 0, soma = 0;
+	for(k = 0; k < contador_aeroportos; k++){
+		if(strcmp(airports[k] == id)){
+			for(colunas = 0; colunas < contador_aeroportos; colunas++){
+				soma += matriz[k][colunas];
+			}
+		}
+	}
+	return soma;
+}
+int voos_chegada(char id[]){
+	 k = 0, linhas = 0, soma = 0;
+	 for(k = 0; k < contador_aeroportos; k++){
+		if(strcmp(airports[k] == id)){
+			for(linhas = 0; linhas < contador_aeroportos; linhas++){
+			soma += matriz[linhas][k];
+			}
+		}
+	 }
+	 return soma;
+}
+int total_de_voos(){
+	for(linhas = 0; linhas < contador_aeroportos; linhas++){
+		for(colunas = 0; colunas < contador_aeroportos; colunas++){
+			soma += matriz[linhas][colunas];
+		}
+	}
+	return soma;
+}		
 /***************************************************************************
  *
  *   FUNCTIONS
@@ -468,6 +500,17 @@ void aeroporto_mais_conectado(){
  *
  */
 void voo_mais_popular(){
+	int valor_temporario = 0, valor_permanente = 0, indice_temporario_linhas = 0, indice_permanente_linhas = 0, indice_temporario_colunas = 0, indice_permanente_colunas = 0,linhas = 0, colunas = 0;
+	for(linhas = 0, indice_temporario_linhas = 0; linhas < MAX_AIRPOR; linhas++, indice_temporario_linhas++){
+		for(colunas = 0, indice_temporario_colunas = 0; colunas < MAX_AIRPORT; colunas++, indice_temporario_colunas++){
+			if((valor_temporario = matriz[linhas][colunas]) > valor_permanente);{
+				valor_permanente = valor_temporario;
+				indice_permanente_linhas = indice_temporario_linhas;
+				indice_permanente_colunas = indice_temporario_colunas;
+			}
+		}
+	}
+	printf("Voo mais popular %s:%s:%d", airport[indice_permanente_linhas].id, airport[indice_permanente_colunas].id, valor_permanente);			
 }
 /*
  *
@@ -475,20 +518,121 @@ void voo_mais_popular(){
  *
  */
 void encerra_aeroporto(){
-}
+				int validade = 0, j = 0, colunas = 0;
+				char i[4] = "\0"
+				validade = le_id(i);
+				if(validade == 0){
+					for(j = 0; j < contador_aeroportos; j++){
+									if(strcmp(i, airport[j].id) == 0){
+													if(airport[j].state == 1){
+														airport[j].state = 0;
+															for( colunas = 0; colunas < MAX_AIRPORT; colunas++){
+																matriz[j][colunas] = 0;	
+																matriz[colunas][j] = 0;
+															}
+													}else{
+													}	
+									}else{
+										printf("*Aeroporto %s inexistente", i);
+									}					
+									break;
+						}
+				}else{
+					printf("*Aeroporto %s inexistente", i);
+				}
+}			
 /*
  *
  *
  *
  */
 void reabre_aeroporto(){
-}
+				int validade = 0, j = 0, colunas = 0;
+				char i[4] = "\0"
+				validade = le_id(i);
+				if(validade == 0){
+					for(j = 0; j < contador_aeroportos; j++){
+									if(strcmp(i, airport[j].id) == 0){
+													if(airport[j].state == 0){
+														airport[j].state = 1;
+													}else{
+													}
+									}else{
+										printf("*Aeroporto %s inexistente", i);
+									}					
+									break;
+						}
+				}else{
+					printf("*Aeroporto %s inexistente", i);
+				}
+}	
 /*
  *
  *
  *
  */
 void emitir_listagem(){
+	getchar() /*le o espaco*/
+	sub_command = geatchar();
+	switch (sub_command) {
+												case '0':
+																ordem_chegada();
+												case '1':
+																ordem_alfabetica();
+												case '2':
+															   distribuicao();
+												default:
+															  printf("Sub command not found:%c\n", sub_command);
+								}
+void ordem_alfabetica(){
+	int a = 0, b = 0, c = 0, indice = 0, valor_string = 0, vetor_ascii_string[contador_aeroportos + 1], valor_permanente = 0, contador = 0, k = 0, valor_temporario = 0, indice_no_vetor_principal = 0;							
+	for(indice = 0, indice  < contador_aeroportos; indice++){
+		a = airports[indice].id[0];
+		b = airports[indice].id[1];
+		c = airports[indice].id[2];
+		valor_string = a + b + c;
+		vetor_ascii_string[indice] = valor_string; 
+	}
+	valor_permanente = vetor_ascii_string[0];
+	for(contador = contador_aeroportos; contador < 0; contador--){
+		for(k = 0; k < contador_aeroportos; k++){
+			valor_temporario = vetor_ascii_string[k];
+			if(valor_temporario < valor_permanente){
+				valor_permanente = valor_temporario;
+				indice_no_vetor_principal = k;
+			}
+		}
+		printf("%s:%d:%d:%d\n", airport[indice_no_vetor_principal].id, airport[indice_no_vetor_principal].capacity, voos_partida(airport[indice_no_vetor_principal].id), voos_chegada(airport[indice_no_vetor_principal].id)); 	
+		}
+}	
+void ordem_chegada(){
+	for(k = 0; k < contador_aeroportos; k++){
+		printf("%s:%d:%d:%d\n", airport[k].id, airport[k].capacity, voos_partida(airport[k].id), voos_chegada(airport[k].id));			
+	}	
+}
+void distribuicao(){
+		int k = 0, soma = 0, vetor_somas[contador_aeroportos], p = 0, soma_aeroportos = 0, v= 0, aeroportos_voos = 0;
+
+	/* manda para o vetor_somas as somas*/
+	for(k = 0, soma = 0; k < contador_aeroportos; k++){
+		for(l = 0; l < contador_aeroportos; l++){
+			soma += matriz[k][l] + matriz[l][k];
+		}
+		vetor_somas[p] = soma;
+		p++;
+	}
+
+	/*o v representa os numeros de voos efetuatos entre dois aeroportos (começa em zero), termina quando tivermos contabilizado todos os aeroportos existentes.*/
+	for(soma_aeroportos = 0, v = 0; soma_aeroportos == contador_aeroportos; v++){
+		for(p = 0; p < contador_aeroportos; p++){
+			if(vetor_somas[p] == v){
+				aeroportos_voos += 1;/*aeroportos com o mesmo numero de voos*/	
+			}
+		}
+		printf("%d:%d", v, numero_de_voos);
+		aeroportos_voos = 0;	
+	
+	}
 }
 /*
  *
@@ -496,4 +640,5 @@ void emitir_listagem(){
  *
  */
 void sair_do_programa(){
+	printf("%d:%d", total_de_voos(), contador_aeroportos);
 }
