@@ -28,34 +28,38 @@ typedef struct{
 AIRPORT airport[MAX_AIRPORT];
 int matriz[MAX_AIRPORT][MAX_AIRPORT];
 int contador_aeroportos = 0;
-ESTRUTURA_AUXILIAR vetor_id_voos[MAX_AIRPORT];
 /****************************************************************************
  *
  *  HEADER
  * 
  *****************************************************************************/
 void init();
-int strlen2(char[]);
-int adiciona_aeroportos();
+void imprime_vetores();
+int  le_id(char i[]);
+int  le_id2(char j[]);
+int  verifica_id(char p[]);
+int  ocupacao_aeroporto(char o[]);
+int  voos_partida(char id[]);
+int  voos_chegada(char id[]);
+int  total_de_voos();
+void adiciona_aeroportos();
 void altera_capacidade_maxima();
-void adiciona_voo_ida_volta(); 
+void adiciona_voo_ida_volta();
 void adiciona_rota();
 void remove_voo();
 void remove_voo_ida_volta();
+void adiciona_voo_aux(int test);
 void numero_voos();
 void aeroporto_mais_voos();
-int aeroporto_mais_conectado();
-int voo_mais_popular();
-int encerra_aeroporto();
-int reabre_aeroporto();
-int emitir_listagem();
-int sair_do_programa();
-int le_id(char[]);
-int leid2(char[]);
-int adiciona_rota(); 
-int imprime_valores();
-void adiciona_voo_aux(int); 
-
+void aeroporto_mais_conectado();
+void voo_mais_popular();
+void encerra_aeroporto();
+void reabre_aeroporto();
+void emitir_listagem();
+void ordem_entrada();
+void ordem_alfabetica();
+void distribuicao();
+void sair_do_programa();
 /****************************************************************************
  *
  *  MAIN
@@ -63,7 +67,6 @@ void adiciona_voo_aux(int);
  ****************************************************************************/
 int main() {
 				char command;
-				int result;
 				init();
 				do {
 #if DEBUG
@@ -77,25 +80,16 @@ int main() {
 
 								switch (command) {
 												case 'A':
-																result = adiciona_aeroportos();
-																if (result != 0) {
-																				if (result == 1 || result == 3) {
-																								printf("There was an error: invalid Id.\n");
-																				}
-																				if (result == 2) {
-																								printf("There was an error: Invalid capacity.\n");
-																								exit(1);
-																				}
-																}
+																adiciona_aeroportos();
 																break;
 												case 'I':
 																altera_capacidade_maxima();
 																break;
 												case 'F':
-																adiciona_voo_ida_volta()
-																				break;
+																adiciona_voo_ida_volta();
+																break;
 												case 'G':
-															  adciona_rota();
+															  adiciona_rota();
 																break;
 												case 'R':
 																remove_voo();
@@ -116,7 +110,7 @@ int main() {
 																voo_mais_popular();
 																break;
 												case 'C':
-																Encerra_aeroporto();
+																encerra_aeroporto();
 																break;
 												case 'O':
 																reabre_aeroporto();
@@ -128,7 +122,7 @@ int main() {
 																sair_do_programa();
 																break;
 												default:
-																				printf("Command not found:%c\n", command);
+																printf("Command not found:%c\n", command);
 								}
 								getchar(); /* le o  \n */
 				}
@@ -156,13 +150,7 @@ void init(){
 								airport[colunas].state = 0;
 				}
 }
-int strlen2(char c[]){
-				int index = 0;
-				while(c[index] != '\0'){
-								index++;
-				}
-				return index; /*meti isto pq n sei ate que ponto podes usar a biblioteca da linha1 */
-}
+
 void imprime_vetores(){
 				int i;
 				printf("LISTA DE AEROPORTOS\n");	
@@ -210,32 +198,31 @@ int le_id2(char j[]){
 int verifica_id(char p[]){ 
 				int k = 0;				
 				for(k = 0; k < contador_aeroportos; k++){
-					if(airport[k].id = p){
+					if(strcmp(airport[k].id, p) == 0){
 						return 0;
 					}
-					else {
-						return 3;}
-					}
+				}
+				return 3;
 }
 int ocupacao_aeroporto(char o[]){
-				for(k = 0; k < MAX_AIRPORT; k++){
-								if(airport[k].id = p){
-												for(linhas = 0; linhas < MAX_AIRPORT; linhas++){
-																for(colunas = 0, colunas < MAX_AIRPORT; colunas++){
+				int k = 0, linhas = 0, colunas = 0, ocupacao = 0;
+				for(k = 0; k < contador_aeroportos; k++){
+								if(strcmp(airport[k].id, o) == 0){
+												for(linhas = 0; linhas < contador_aeroportos; linhas++){
+																for(colunas = 0; colunas < contador_aeroportos; colunas++){
 																				ocupacao += matriz[k][colunas];
 																}
-																ocupacao += matriz[linhas][k];}
-												ocupacao -= matriz[k][k];
-												return ocupacao;}
-								else{
-												return -1
-								}
+																ocupacao += matriz[linhas][k];
+												}
+												return ocupacao;
+							  }	
 				}
+				return -1;
 }
 int voos_partida(char id[]){
 	int k = 0, colunas = 0, soma = 0;
 	for(k = 0; k < contador_aeroportos; k++){
-		if(strcmp(airports[k] == id)){
+		if(strcmp(airport[k].id, id)){
 			for(colunas = 0; colunas < contador_aeroportos; colunas++){
 				soma += matriz[k][colunas];
 			}
@@ -244,9 +231,9 @@ int voos_partida(char id[]){
 	return soma;
 }
 int voos_chegada(char id[]){
-	 k = 0, linhas = 0, soma = 0;
+	 int k = 0, linhas = 0, soma = 0;
 	 for(k = 0; k < contador_aeroportos; k++){
-		if(strcmp(airports[k] == id)){
+		if(strcmp(airport[k].id, id)){
 			for(linhas = 0; linhas < contador_aeroportos; linhas++){
 			soma += matriz[linhas][k];
 			}
@@ -255,6 +242,7 @@ int voos_chegada(char id[]){
 	 return soma;
 }
 int total_de_voos(){
+	int linhas = 0, colunas = 0, soma = 0;
 	for(linhas = 0; linhas < contador_aeroportos; linhas++){
 		for(colunas = 0; colunas < contador_aeroportos; colunas++){
 			soma += matriz[linhas][colunas];
@@ -277,30 +265,30 @@ int total_de_voos(){
  *		   unsigned int or less then zero
  *
  */
-int adiciona_aeroportos() {
-				int k = 0, validade = 0;
+void adiciona_aeroportos() {
+				int k = 0;
 				char i[4] = "\0";
-				validade = le_id(i)
-								if(validade == 0){
+								if(le_id(i) == 0){
 												strcpy(airport[contador_aeroportos].id, i);
 												scanf("%u", &airport[contador_aeroportos].capacity);
 												for(k = 0; k < 3; k++){
-																if(strlen2(airport[contador_aeroportos].id) != 3 || airport[contador_aeroportos].id[k] > 'Z' || airport[contador_aeroportos].id[k] < 'A'){
-																				return 1;
+																if(strlen(airport[contador_aeroportos].id) != 3 || airport[contador_aeroportos].id[k] > 'Z' || airport[contador_aeroportos].id[k] < 'A'){
+																				printf("There was an error: invalid id");
 																}
 												} 
 												if(airport[contador_aeroportos].capacity <= 0 ||
 																				airport[contador_aeroportos].capacity > UINT_MAX){
-																return 2;
+																printf("There was an error: invalid capacity");
 												}
+												airport[contador_aeroportos].state = 1;
 												contador_aeroportos++;
 #if DEBUG
 												imprime_vetores();
 #endif
-												return 0;
 								}
 								else {
-												return 3;}
+									printf("There was an error: invalid id");				
+								}
 }
 /*
  * Esta função altera a capacidade maxima de um aeroporto
@@ -311,7 +299,7 @@ int adiciona_aeroportos() {
  *
  */
 void altera_capacidade_maxima() { 
-				int validade = 0, j = 0;
+				int validade = 0, j = 0, capacidade_inserida = 0, nova_capacidade = 0;
 				char i[4] = "\0";
 				validade = le_id(i);
 				if(validade == 0){
@@ -341,6 +329,8 @@ void altera_capacidade_maxima() {
 				}
 				else{
 						printf("*Capacidade de %s inalterada\n", airport[j].id);
+        }
+}
 /* Estas funções adicionam o voo de ida e volta (no caso da primeira), adicionam de ida (no caso da segunda), removem o voo de ida (no caso da terceira), removem de ida e volta (no caso da quarta)  
  * 			vetor i --> primeiro id
  *      vetor j --> segundo id
@@ -357,10 +347,10 @@ void remove_voo(){
 				adiciona_voo_aux(1);
 }
 void remove_voo_ida_volta(){
-				adiciona_voo_aux(0)
+				adiciona_voo_aux(0);
 }
-adiciona_voo_aux(int test) {
-	int validade_1_id = 0, validade_2_id = 0, existe_1_id = 0, existe_2_id = 0, ocupacao_1_id = 0, ocupacao_2_id, k = 0;
+void adiciona_voo_aux(int test) {
+	int validade_1_id = 0, validade_2_id = 0, existe_1_id = 0, existe_2_id = 0, ocupacao_1_id = 0, ocupacao_2_id, k = 0, v = 0;
 	char i[4] = "\0", j[4] = "\0";
 	validade_1_id = le_id(i);
 	validade_2_id = le_id2(j);
@@ -407,45 +397,40 @@ adiciona_voo_aux(int test) {
  *   					printf("Voos entre cidades id_1:id_2:Noutgoing:Nincoming")
  * On failure:
  * 						printf("*Aeroporto <id> inexistente")
+ *						or
+ *						printf("There was an error: invalid id")
  */
 void numero_voos(){
-		int validade_1_id = 0, validade_2_id = 0, existe_1_id = 0, existe_2_id = 0, ocupacao_1_id = 0, ocupacao_2_id, k = 0;
+	int k = 0, v = 0;
 	char i[4] = "\0", j[4] = "\0";
-	validade_1_id = le_id(i);
-	validade_2_id = le_id2(j);
-	if(validade_1_id == 0){
-		if(validade_2_id == 0){
-			existe_1_id = verifica_id(i);
-			existe_2_id = verifica_id(j);
-			if(existe_1_id == 0){
-				if(existe_2_id == 0){
-					for(k = 0; k < MAX_AIRPORT; k++){ 
-						if(strcmp(airport[k].id, i) == 0 && 
-								airport[k].state == 1){
-							for(v = 0; v < MAX_AIRPORT; v++);{
-								if(strcmp(airport[v].id, j) == 0 && 
-									airport[v].state == 1){
-									printf("Voos entre cidades %s:%s:%d:%d", i,j, matriz[k][v], matriz[v][k]);		
-								}else{
-									printf("*Aeroporto %s inexistente", j);		
-								}
-							} /* END OF FOR */
-						}else{
-							printf("*Aeroporto %s inexistente", i);
+	if((le_id(i) == 0) && (le_id2(j) == 0)){/*verifica se a sequencia de letras introduzidas esta correta*/
+			if((verifica_id(i) == 0) && (verifica_id(j) == 0)){/*verifica se estes ids sao conhecidos(se os aeroportos ja foram introduzidos)*/ 
+				for(k = 0; k < contador_aeroportos; k++){
+					if((strcmp(airport[k].id, i) == 0) && (airport[k].state == 1)){
+						for(v = 0; v < contador_aeroportos; v++){
+							if((strcmp(airport[v].id, j) == 0) && (airport[v].state == 1)){
+								printf("Voos entre cidades %s:%s:%d:%d", i,j, matriz[k][v], matriz[v][k]);
+							}
 						}
-					} /* END OF FOR */
-				}else{
-				printf("*Aeroporto %s inexistente", j);
-				} 
-			}else{
-				printf("*Aeroporto %s inexistente", i);
+					}
+				}
 			}
-		}else{
-			printf("*Aeroporto %s inexistente", j);
-		}
-	}else{
-		printf("*Aeroporto %s inexistente", i);
+			else{
+				if((verifica_id(i) == 0) && (verifica_id(j) == 3)){
+					printf("*Aeroporto %s inexistente", j);
+				}
+				if((verifica_id(i) == 3) && (verifica_id(j) == 0)){
+					printf("*Aeroporto %s inexistente", i);
+				}
+				else{
+					printf("*Aeroporto %s inexistente", i);
+					printf("*Aeroporto %s inexistente", j);
+				}
+			}
 	}
+	else{
+		printf("There was an error: Invalid id");
+  }
 }
 /* Esta função retorna o nome do aeroporto(id) com maior numero de voos que chegam e partem 
  *
@@ -453,56 +438,49 @@ void numero_voos(){
  *
  */
 void aeroporto_mais_voos(){
-	int k = 0, j = 0, i_valor_maximo = 0, l = 0, vetor_de_totais[MAX_AIRPORT], soma_temporaria = 0, soma_permanente = 0, ida_temporaria = 0, ida_permanente = 0, vinda_temporaria = 0, vinda_permanente = 0;
-	for(k = 0, soma_temporaria = 0; k < MAX_AIRPORT; k++, soma_temporaria = 0){
-		for(l = 0; l < MAX_AIRPORT; l++){
+	int k = 0, indice = 0, l = 0, soma_temporaria = 0, soma_permanente = 0, ida = 0, vinda = 0;
+	for(k = 0, soma_temporaria = 0, ida = 0, vinda = 0; k < contador_aeroportos; k++, soma_temporaria = 0){/*este for percorre as linhas*/
+		for(l = 0; l < contador_aeroportos; l++){/*este for percorre as colunas, e é aqui que se cria a variavel temporaria referente a cada um dos aeroportos*/
 			soma_temporaria += matriz[k][l] + matriz[l][k];
-			ida_temporaria = matriz[k][l];
-			vinda_permanente = matriz[l][k];
-			if(soma_permanente < soma_temporaria){
-				soma_permanente = soma_temporaria;
-				ida_permanente = ida_temporaria;
-				vinda_permanente = vinda_temporaria;	 
 		}
-		vetor_de_totais[k] = soma;
-	}
-	for(j = 0; j < MAX_AIRPORT; j++){
-		 if(vetor_de_totais[j] > vetor_de_totais[i_valor_maximo]){
-			i_valor_maximo = j;
-		 }
+			if(soma_permanente < soma_temporaria){/*é este if que vai permitir saber qual o aeroportos tem mais voos*/
+				ida = matriz[k][l];
+				vinda = matriz[l][k];
+				indice = k;	 
+		}
 	}		
-	printf("Aeroporto com mais rotas %s:%d:%d", airport[i_valor_maximo].id, ida_permanente, vinda_permanente); 
+	printf("Aeroporto com mais rotas %s:%d:%d", airport[indice].id, ida, vinda); 
 }
-/*piroca
- *
+/* Esta função verifica qual dos aeroportos possui mais ligações com os restantes.
+ *		
  * 
  * 
  */
 void aeroporto_mais_conectado(){
-	int k = 0, j = 0, i_valor_maximo = 0, l = 0, vetor_de_totais[MAX_AIRPORT], soma_temporaria = 0, soma_permanente = 0, ida_temporaria = 0, ida_permanente = 0, vinda_temporaria = 0, vinda_permanente = 0;
-	for(linhas = 0, indice_temporario = 0; linhas < MAX_AIRPORT; linhas++, indice_temporario++){
-		for(colunas = 0; colunas < MAX_AIRPORT; colunas++){
-			if((matriz[linhas][colunas] > 0 && matriz[colunas][linhas] > 0) || (matriz[linhas][colunas] > 0 && matriz[linhas][colunas] < 0) || (matriz[linhas][colunas] < 0 && matriz[linhas][colunas] > 0)){
+	int linhas = 0, colunas = 0, soma_temporaria = 0, soma_permanente = 0, indice = 0;
+	for(linhas = 0, indice = 0, soma_temporaria = 0; linhas < contador_aeroportos; linhas++, soma_temporaria = 0){
+		for(colunas = 0; colunas < contador_aeroportos; colunas++){
+			if((matriz[linhas][colunas] > 0 && matriz[colunas][linhas] > 0) || (matriz[linhas][colunas] > 0 && matriz[linhas][colunas] < 0) || (matriz[linhas][colunas] < 0 && matriz[linhas][colunas] > 0)){ /*contabiliza para quantos lados diferentes ou de quantos lados diferentes sao efetuados os voos de/para cada um dos aeroportos*/
 				soma_temporaria	+= 1; 
-		  }
+		  } 
 		}
 			if(soma_temporaria > soma_permanente){
-				soma_permanente = soma_temporaria;
-				indice_permanente = indice_temporario;
+				 soma_permanente = soma_temporaria;
+				 indice = linhas;
 			}
 	}		
 	
-	printf("Aeroporto com mais ligacoes %s:%d", airport[indice_temporario], indice_permanente); 
+	printf("Aeroporto com mais ligacoes %s:%d", airport[indice].id, soma_permanente); 
 }
-/* piroca
- *
+/* Esta função indica qual o voo executado mais vezes
+ *	
  *
  *
  */
 void voo_mais_popular(){
 	int valor_temporario = 0, valor_permanente = 0, indice_temporario_linhas = 0, indice_permanente_linhas = 0, indice_temporario_colunas = 0, indice_permanente_colunas = 0,linhas = 0, colunas = 0;
-	for(linhas = 0, indice_temporario_linhas = 0; linhas < MAX_AIRPOR; linhas++, indice_temporario_linhas++){
-		for(colunas = 0, indice_temporario_colunas = 0; colunas < MAX_AIRPORT; colunas++, indice_temporario_colunas++){
+	for(linhas = 0, indice_temporario_linhas = 0; linhas < contador_aeroportos; linhas++, indice_temporario_linhas++){
+		for(colunas = 0, indice_temporario_colunas = 0; colunas < contador_aeroportos; colunas++, indice_temporario_colunas++){
 			if((valor_temporario = matriz[linhas][colunas]) > valor_permanente);{
 				valor_permanente = valor_temporario;
 				indice_permanente_linhas = indice_temporario_linhas;
@@ -512,27 +490,26 @@ void voo_mais_popular(){
 	}
 	printf("Voo mais popular %s:%s:%d", airport[indice_permanente_linhas].id, airport[indice_permanente_colunas].id, valor_permanente);			
 }
-/*
+/* Esta função vai verificar se o aeroporto selecionado existe e em caso afirmativo e caso o seu state seja 1 vai encerra-lo(state a 0)
  *
  *
  *
  */
 void encerra_aeroporto(){
-				int validade = 0, j = 0, colunas = 0;
-				char i[4] = "\0"
-				validade = le_id(i);
-				if(validade == 0){
+				int j = 0, colunas = 0;
+				char i[4] = "\0";
+				if(le_id(i) == 0){
 					for(j = 0; j < contador_aeroportos; j++){
 									if(strcmp(i, airport[j].id) == 0){
 													if(airport[j].state == 1){
 														airport[j].state = 0;
-															for( colunas = 0; colunas < MAX_AIRPORT; colunas++){
+															for( colunas = 0; colunas < MAX_AIRPORT; colunas++){/*vai colocar a zero a linha e a coluna da matriz onde o aeroporto aparece*/
 																matriz[j][colunas] = 0;	
 																matriz[colunas][j] = 0;
 															}
-													}else{
+													}else{/*nada acontece. caso em que o aeroporto ja se encontra encerrado*/
 													}	
-									}else{
+									 }else{
 										printf("*Aeroporto %s inexistente", i);
 									}					
 									break;
@@ -541,21 +518,20 @@ void encerra_aeroporto(){
 					printf("*Aeroporto %s inexistente", i);
 				}
 }			
-/*
+/* Esta função vai verificar se o aeroporto selecionado existe e em caso afirmativo e caso o seu state seja 0 vai reabri-lo(state a 1)
  *
  *
  *
  */
 void reabre_aeroporto(){
-				int validade = 0, j = 0, colunas = 0;
-				char i[4] = "\0"
-				validade = le_id(i);
-				if(validade == 0){
+				int j = 0;
+				char i[4] = "\0";
+				if(le_id(i) == 0){
 					for(j = 0; j < contador_aeroportos; j++){
 									if(strcmp(i, airport[j].id) == 0){
 													if(airport[j].state == 0){
 														airport[j].state = 1;
-													}else{
+													}else{/*nada acontece. caso em que o aeroporto ja se encontra aberto*/
 													}
 									}else{
 										printf("*Aeroporto %s inexistente", i);
@@ -566,53 +542,55 @@ void reabre_aeroporto(){
 					printf("*Aeroporto %s inexistente", i);
 				}
 }	
-/*
- *
- *
- *
+/* Esta função vai emitir uma listagem diferente conforme o subcomando inserido:
+ *		0-imprime de acordo com a ordem de entrada dos aeroportos no sistema
+ *		1-imprime de acordo com a ordem alfabetica dos aeroportos
+ *		2-imprime o numero de aeroportos que possuem k voos. o k será sempre maior que zero e menor ou igual à capacidade do aeroporto com maior *		capacidade
  */
 void emitir_listagem(){
-	getchar() /*le o espaco*/
-	sub_command = geatchar();
+	int sub_command; 
+	getchar(); /*le o espaco*/
+	sub_command = getchar();
 	switch (sub_command) {
 												case '0':
-																ordem_chegada();
+																ordem_entrada();
 												case '1':
 																ordem_alfabetica();
 												case '2':
-															   distribuicao();
+															  distribuicao();
 												default:
 															  printf("Sub command not found:%c\n", sub_command);
-								}
-void ordem_alfabetica(){
-	int a = 0, b = 0, c = 0, indice = 0, valor_string = 0, vetor_ascii_string[contador_aeroportos + 1], valor_permanente = 0, contador = 0, k = 0, valor_temporario = 0, indice_no_vetor_principal = 0;							
-	for(indice = 0, indice  < contador_aeroportos; indice++){
-		a = airports[indice].id[0];
-		b = airports[indice].id[1];
-		c = airports[indice].id[2];
-		valor_string = a + b + c;
-		vetor_ascii_string[indice] = valor_string; 
-	}
-	valor_permanente = vetor_ascii_string[0];
-	for(contador = contador_aeroportos; contador < 0; contador--){
-		for(k = 0; k < contador_aeroportos; k++){
-			valor_temporario = vetor_ascii_string[k];
-			if(valor_temporario < valor_permanente){
-				valor_permanente = valor_temporario;
-				indice_no_vetor_principal = k;
-			}
-		}
-		printf("%s:%d:%d:%d\n", airport[indice_no_vetor_principal].id, airport[indice_no_vetor_principal].capacity, voos_partida(airport[indice_no_vetor_principal].id), voos_chegada(airport[indice_no_vetor_principal].id)); 	
-		}
+											}
 }	
-void ordem_chegada(){
+void ordem_entrada(){
+	int k = 0;
 	for(k = 0; k < contador_aeroportos; k++){
 		printf("%s:%d:%d:%d\n", airport[k].id, airport[k].capacity, voos_partida(airport[k].id), voos_chegada(airport[k].id));			
 	}	
 }
+void ordem_alfabetica(){
+	int a = 0, b = 0, c = 0, indice = 0, valor_string = 0, vetor_ascii_string[contador_aeroportos + 1], valor = 0, contador = 0, k = 0, indice_no_vetor_principal = 0;							
+	for(indice = 0; indice  < contador_aeroportos; indice++){/*neste for pega-se em todos os aeroportos que estão no vetor airport e são copiados o vetor_ascii_string sob forma de um numero*/
+		a = airport[indice].id[0];
+		b = airport[indice].id[1];
+		c = airport[indice].id[2];
+		valor_string = a + b + c;
+		vetor_ascii_string[indice] = valor_string; 
+	}
+	valor = vetor_ascii_string[0];
+	for(contador = contador_aeroportos; contador < 0; contador--){/*com este ciclo garanti-mos que todas os elementos do vetor_ascii_string são usados somente uma vez */
+		for(k = 0; k < contador_aeroportos; k++){/*cada vez que este ciclo é percorrido é feito o print do id */
+			if(vetor_ascii_string[k] <= valor){/*n existem dois ids iguais logo n existe o caso de os numeros sob os quais eles sao representados serem iguais. ora como os numero mais baixos vao sendo impressos e passam a assumir no vetor a forma de 909090 o menor ou IGUAL cobre o caso de existir o id ZZZ*/
+				valor = vetor_ascii_string[k];
+				indice_no_vetor_principal = k;
+				vetor_ascii_string[k] = 909090; /*o elemento que aparecia primeiro em ordenação lexicografica passa a assumir a forma de ZZZ no vetor_ascii_string e consequentemente passa a ser ignorado*/ 
+			}
+		}
+		printf("%s:%d:%d:%d\n", airport[indice_no_vetor_principal].id, airport[indice_no_vetor_principal].capacity, voos_partida(airport[indice_no_vetor_principal].id), voos_chegada(airport[indice_no_vetor_principal].id)); 	
+		}
+}
 void distribuicao(){
-		int k = 0, soma = 0, vetor_somas[contador_aeroportos], p = 0, soma_aeroportos = 0, v= 0, aeroportos_voos = 0;
-
+		int k = 0, soma = 0, vetor_somas[contador_aeroportos], p = 0, soma_aeroportos = 0, v = 0, aeroportos_voos = 0, l = 0;
 	/* manda para o vetor_somas as somas*/
 	for(k = 0, soma = 0; k < contador_aeroportos; k++){
 		for(l = 0; l < contador_aeroportos; l++){
@@ -622,19 +600,19 @@ void distribuicao(){
 		p++;
 	}
 
-	/*o v representa os numeros de voos efetuatos entre dois aeroportos (começa em zero), termina quando tivermos contabilizado todos os aeroportos existentes.*/
+	/*o v representa os numeros de voos efetuatos entre dois aeroportos (começa em zero), termina quando tivermos contabilizado todos os aeroportos existentes, a variavel soma_aeroportos serve para sabermos quando atingimos o total de aeroportos, é entao neste altura que deixa de fazer sentido continuar a incrementar o v*/
 	for(soma_aeroportos = 0, v = 0; soma_aeroportos == contador_aeroportos; v++){
 		for(p = 0; p < contador_aeroportos; p++){
 			if(vetor_somas[p] == v){
 				aeroportos_voos += 1;/*aeroportos com o mesmo numero de voos*/	
 			}
 		}
-		printf("%d:%d", v, numero_de_voos);
+		printf("%d:%d", v, aeroportos_voos);
 		aeroportos_voos = 0;	
 	
 	}
 }
-/*
+/*  Esta função termina o programa e imprime uma mensagem com o total de voos e com o numero de aeroportos
  *
  *
  *
